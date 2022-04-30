@@ -14,24 +14,27 @@ router.get('/comments', async (req, res) => {
 // write comments
 router.post('/comment', async (req, res) => {
   try {
-    const comment = new Comment(req.body);
+    console.log(req.body)
+    let comment = new Comment(req.body);
     await comment.save()
+    return res.status(200).json({ message: 'success'})
   } catch (error) {
-    res.status(400).json({ message : "failed", error})
+    return res.status(400).json({ message : "failed", error})
   }
 });
 
 // add upvotes
-router.post('/comment/:commentId/upvote/', async (req, res) => {
+router.post('/comment/:commentId/upvote', async (req, res) => {
   try {
-    let votes;
-    if(op === "add") {
-      await Comment.findOneAndUpdate({ _id: req.params.commentId}, { $inc: {upvotes: 1}})
+    const {operation} = req.body;
+    if(operation === "add") {
+      t = await Comment.findOneAndUpdate({ _id: req.params.commentId}, { $inc: {upvotes: 1}})
     } else {
-      await Comment.findOneAndUpdate({ _id: req.params.commentId}, { $inc: {upvotes: -1}})
+      t = await Comment.findOneAndUpdate({ _id: req.params.commentId}, { $inc: {upvotes: -1}})
     }
+    return res.status(200).json({ message: 'success'})
   } catch(error) {
-    res.status(400).json({ message : "failed", error})
+    return res.status(400).json({ message : "failed", error})
   }
 })
 
